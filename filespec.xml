@@ -1,1 +1,4 @@
-<file name="/usr/bin/leveling-glass" user="root" group="root" mode="644"/>
+<filespec>
+    <file name="usr/bin/leveling-glass" user="root" group="root" mode="755"/>
+    <file name="etc/leveling-glass/log.cfg" user="root" group="root" mode="644"/>
+</filespec>
