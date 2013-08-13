@@ -1,3 +1,4 @@
 fatload mmc 0:1 0x80000000 uImage
+fatload mmc 0:1 0x81600000 uInitrd
 setenv bootargs rw vram=32M fixrtc mem=1G@0x80000000 root=/dev/mmcblk0p2 console=ttyO2,115200n8 rootwait debug
 bootm 0x80000000
