@@ -1,6 +1,3 @@
-[submodule "staging"]
-	path = staging
-	url = git@github.com:treidel/staging.git
 [submodule "tools"]
 	path = tools
 	url = git@github.com:treidel/tools.git
