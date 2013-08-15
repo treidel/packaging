@@ -22,19 +22,19 @@ for tarinfo in tar:
     #print "base => " + tarinfo.name, "user=" + tarinfo.uname, "uid=" + str(tarinfo.uid), "group=" + tarinfo.gname, "gid=" + str(tarinfo.gid), "type=" + tarinfo.type, "mode=" + str(oct(tarinfo.mode))
     # see what kind of element this is
     if tarinfo.isfile():
-        print '  <file name="%s" user="%s" group="%s" mode="%s" time="%s"/>' % (tarinfo.name, tarinfo.uname, tarinfo.gname, str(oct(tarinfo.mode)), tarinfo.mtime)
+        print '  <file name="%s" user="%s" group="%s" mode="%s"/>' % (tarinfo.name, tarinfo.uname, tarinfo.gname, str(oct(tarinfo.mode)))
     elif tarinfo.isdir():
-        print '  <dir name="%s" user="%s" group="%s" mode="%s" time="%s"/>' % (tarinfo.name, tarinfo.uname, tarinfo.gname, str(oct(tarinfo.mode)), tarinfo.mtime)
+        print '  <dir name="%s" user="%s" group="%s" mode="%s"/>' % (tarinfo.name, tarinfo.uname, tarinfo.gname, str(oct(tarinfo.mode)))
     elif tarinfo.issym():
-        print '  <sym name="%s" link="%s" user="%s" group="%s" mode="%s" time="%s"/>' % (tarinfo.name, tarinfo.linkname, tarinfo.uname, tarinfo.gname, str(oct(tarinfo.mode)), tarinfo.mtime)
+        print '  <sym name="%s" link="%s" user="%s" group="%s" mode="%s"/>' % (tarinfo.name, tarinfo.linkname, tarinfo.uname, tarinfo.gname, str(oct(tarinfo.mode)))
     elif tarinfo.islnk():    
-        print '  <lnk name="%s" link="%s" user="%s" group="%s" mode="%s" time="%s"/>' % (tarinfo.name, tarinfo.linkname, tarinfo.uname, tarinfo.gname, str(oct(tarinfo.mode)), tarinfo.mtime)
+        print '  <lnk name="%s" link="%s" user="%s" group="%s" mode="%s"/>' % (tarinfo.name, tarinfo.linkname, tarinfo.uname, tarinfo.gname, str(oct(tarinfo.mode)))
     elif tarinfo.ischr():
-        print '  <chr name="%s" user="%s" group="%s" mode="%s" time="%s"/>' % (tarinfo.name, tarinfo.uname, tarinfo.gname, str(oct(tarinfo.mode)), tarinfo.mtime)
+        print '  <chr name="%s" user="%s" group="%s" mode="%s"/>' % (tarinfo.name, tarinfo.uname, tarinfo.gname, str(oct(tarinfo.mode)))
     elif tarinfo.isblk():
-        print '  <blk name="%s" user="%s" group="%s" mode="%s" time="%s"/>' % (tarinfo.name, tarinfo.uname, tarinfo.gname, str(oct(tarinfo.mode)), tarinfo.mtime)
+        print '  <blk name="%s" user="%s" group="%s" mode="%s"/>' % (tarinfo.name, tarinfo.uname, tarinfo.gname, str(oct(tarinfo.mode)))
     elif tarinfo.isfifo():
-        print '  <fifo name="%s" user="%s" group="%s" mode="%s" time="%s"/>' % (tarinfo.name, tarinfo.uname, tarinfo.gname, str(oct(tarinfo.mode)), tarinfo.mtime)
+        print '  <fifo name="%s" user="%s" group="%s" mode="%s"/>' % (tarinfo.name, tarinfo.uname, tarinfo.gname, str(oct(tarinfo.mode)))
     else:
         raise BaseException 
 
