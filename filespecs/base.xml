@@ -16519,12 +16519,6 @@
   <file name="var/lib/dpkg/status" user="root" group="root" mode="0644"/>
   <dir name="var/lib/dpkg/updates" user="root" group="root" mode="0755"/>
   <dir name="var/lib/bluetooth" user="root" group="root" mode="0755"/>
-  <dir name="var/lib/bluetooth/00:02:72:33:47:DC" user="root" group="root" mode="0755"/>
-  <file name="var/lib/bluetooth/00:02:72:33:47:DC/lastseen" user="root" group="root" mode="0644"/>
-  <file name="var/lib/bluetooth/00:02:72:33:47:DC/names" user="root" group="root" mode="0644"/>
-  <file name="var/lib/bluetooth/00:02:72:33:47:DC/eir" user="root" group="root" mode="0644"/>
-  <file name="var/lib/bluetooth/00:02:72:33:47:DC/classes" user="root" group="root" mode="0644"/>
-  <file name="var/lib/bluetooth/00:02:72:33:47:DC/config" user="root" group="root" mode="0644"/>
   <dir name="var/lib/pam" user="root" group="root" mode="0755"/>
   <file name="var/lib/pam/session" user="root" group="root" mode="0644"/>
   <file name="var/lib/pam/auth" user="root" group="root" mode="0644"/>
