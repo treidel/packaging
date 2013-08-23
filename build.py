@@ -98,9 +98,9 @@ try:
     bootfiles = glob.glob(boot + "/*")
 
     # generate the image
-    args = ["./mk-disk.py", "--output", args.output, "--tar", tmpfilename, "--boot-files"] + bootfiles
-    print >> sys.stderr, "executing:", ' '.join(args)
-    subprocess.call(args) 
+    cmd = ["./mk-disk.py", "--output", args.output, "--tar", tmpfilename, "--boot-files"] + bootfiles
+    print >> sys.stderr, "executing:", ' '.join(cmd)
+    subprocess.call(cmd) 
 
 except:
     # close + remove the temporary tar
