@@ -8,15 +8,17 @@ import sys
 import xml.etree.ElementTree
 import subprocess
 import glob
- 
+import time
+
 # parse the arguments
 parser = argparse.ArgumentParser(description="build script for leveling-glass images")
 parser.add_argument('--output', required=True)
+parser.add_argument('--staging', required=True)
 parser.add_argument('--filespec', nargs="+", required=True)
 args = parser.parse_args()
 
 # figure out the path to the staging + boot files
-staging = os.path.abspath(os.path.dirname(sys.argv[0])) + "/staging"
+staging = args.staging
 boot = os.path.abspath(os.path.dirname(sys.argv[0])) + "/boot"
 
 
@@ -42,15 +44,22 @@ try:
         for element in filespectree.getroot():
             # get the common attributes
             name = element.get("name")
-            user = element.get("user")
-            group = element.get("group")
+            uid = int(element.get("uid"))
+            gid = int(element.get("gid"))
             mode = int(element.get("mode"), 8)
-            print >> sys.stderr, filespec, "=>", name, "user=" + user, "group=" + group, "type=" + element.tag, "mode=" + str(oct(mode))
+            # if there isn't a timestamp choose 'now'
+            if element.get("timestamp") is None:
+                timestamp = time.time()
+            else:
+                timestamp = int(element.get("timestamp"))
+            # output a log for this element
+            print >> sys.stderr, filespec, "=>", name, "uid=" + str(uid), "gid=" + str(gid), "type=" + element.tag, "mode=" + str(oct(mode)), "timestamp=" + str(timestamp)
             # setup the tarinfo object
             tarinfo = tarfile.TarInfo(name)
-            tarinfo.uname = user
-            tarinfo.gname = group
+            tarinfo.uid = uid
+            tarinfo.gid = gid
             tarinfo.mode = mode
+            tarinfo.mtime = timestamp
 
             # do different things depending on the type of entry we found
             if element.tag == "file":
@@ -58,9 +67,8 @@ try:
                 path = staging + "/" + name
                 # open the file for this entry
                 file = open(path, 'r')
-                # populate the size + time
+                # populate the size based on the file system contents
                 tarinfo.size = os.path.getsize(path)
-                tarinfo.mtime = os.path.getmtime(path)
                 # add the file to the tar
                 tar.addfile(tarinfo, file)
                 # close the file
@@ -68,8 +76,6 @@ try:
             elif element.tag == "dir":
                 tarinfo.type = tarfile.DIRTYPE
                 path = staging + "/" + name
-                # populate the time
-                tarinfo.mtime = os.path.getmtime(path)
                 tar.addfile(tarinfo)
             elif element.tag == "sym":
                 tarinfo.type = tarfile.SYMTYPE
