@@ -13,7 +13,10 @@ if len(sys.argv) < 2:
 input = sys.argv[1]
 
 # open the tar file
-tar = tarfile.open(input, "r:gz")
+if input.endswith('.gz'):
+    tar = tarfile.open(input, "r:gz")
+else:
+    tar = tarfile.open(input, "r")
 
 print '<filespec>'
 
