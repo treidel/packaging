@@ -53,7 +53,7 @@ try:
             else:
                 timestamp = int(element.get("timestamp"))
             # output a log for this element
-            print >> sys.stderr, filespec, "=>", name, "uid=" + str(uid), "gid=" + str(gid), "type=" + element.tag, "mode=" + str(oct(mode)), "timestamp=" + str(timestamp)
+            print >> sys.stderr, filespec, "=>", name.encode("utf-8"), "uid=" + str(uid), "gid=" + str(gid), "type=" + str(element.tag), "mode=" + str(oct(mode)), "timestamp=" + str(timestamp)
             # setup the tarinfo object
             tarinfo = tarfile.TarInfo(name)
             tarinfo.uid = uid
