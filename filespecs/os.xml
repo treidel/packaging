@@ -1,0 +1,5 @@
+<filespec>
+    <file name="usr/bin/leveling-glass" uid="0" gid="0" mode="755"/>
+    <file name="etc/leveling-glass/log.cfg" uid="0" gid="0" mode="644"/>
+    <file name="etc/init/leveling-glass.conf" uid="0" gid="0" mode="644"/>
+</filespec>
