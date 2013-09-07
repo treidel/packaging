@@ -17,6 +17,12 @@ parser.add_argument('--staging', required=True)
 parser.add_argument('--filespec', nargs="+", required=True)
 args = parser.parse_args()
 
+# expand the list of filespecs if necessary
+if (1 >= len(args.filespec)):
+    filespecs = glob.glob(args.filespec[0])
+else:
+    filespecs = args.filespec
+
 # figure out the path to the staging + boot files
 staging = args.staging
 boot = os.path.abspath(os.path.dirname(sys.argv[0])) + "/boot"
@@ -33,9 +39,8 @@ tar = tarfile.open(fileobj=tmpfile, mode='w')
 
 # wrap this in an exception handler so that we can remove the tar file in exception cases 
 try:
-
     # open each filespec
-    for filespec in args.filespec:
+    for filespec in filespecs:
         # open the filespec
         print >> sys.stderr, "reading filespec " + filespec
         filespectree = xml.etree.ElementTree.parse(filespec)
