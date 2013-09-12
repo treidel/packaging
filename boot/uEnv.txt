@@ -1,4 +1,4 @@
-optargs=fixrtc
+optargs=fixrtc capemgr.disable_partno=BB-BONELT-HDMI,BB-BONELT-HDMIN
 loadfdt=ext4load mmc ${mmcdev}:2 ${fdtaddr} /boot/dtbs/${fdtfile}
 loaduimage=mw.l 4804c134 fe1fffff; if ext4load mmc 0:2 ${loadaddr} /boot/zImage; then mw.l 4804c194 01200000; echo Booting from external microSD...; setenv mmcdev 0; else setenv mmcdev 1; if test $mmc0 = 1; then setenv mmcroot /dev/mmcblk1p2 rw; fi; ext4load mmc 1:2 ${loadaddr} /boot/zImage && mw.l 4804c194 00c00000; echo Booting from internal eMMC...; fi
 mmcboot=run mmcargs; bootz ${loadaddr} - ${fdtaddr}
