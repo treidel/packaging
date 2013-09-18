@@ -1824,6 +1824,7 @@
     <file gid="0" mode="0644" name="lib/firmware/3com/3C359.bin" timestamp="1370742645" uid="0" />
     <file gid="0" mode="0644" name="lib/firmware/3com/typhoon.bin" timestamp="1370742645" uid="0" />
     <file gid="0" mode="0644" name="lib/firmware/BB-BONE-AUDI-01-00A0.dtbo" timestamp="1369825315" uid="0" />
+    <file gid="0" mode="0644" name="lib/firmware/BB-BONE-AUDI-01-00A1.dtbo" timestamp="1369825315" uid="0" />
     <file gid="0" mode="0644" name="lib/firmware/BB-BONE-CAM3-01-00A2.dtbo" timestamp="1369825316" uid="0" />
     <file gid="0" mode="0644" name="lib/firmware/BB-BONE-GPEVT-00A0.dtbo" timestamp="1369825315" uid="0" />
     <file gid="0" mode="0644" name="lib/firmware/BB-BONE-LCD4-01-00A0.dtbo" timestamp="1369825315" uid="0" />
