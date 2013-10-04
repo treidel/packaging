@@ -21,7 +21,7 @@ try:
  
     # Create a raw-format sparse disk image, 1024 MB in size.
     f = open (output, "w")
-    f.truncate (1152 * 1024 * 1024)
+    f.truncate (1920 * 1024 * 1024)
     f.close ()
  
     # Set the trace flag so that we can see each libguestfs call.
@@ -46,10 +46,10 @@ try:
     # partition #1: FAT, size=16MB, type=12
     # partition #2: LINUX, size=2022 MB
     g.part_init(device, "mbr")
-    g.part_add(device, "primary", 32, 32799)
+    g.part_add(device, "primary", 63, 144584)
     g.part_set_mbr_id(device, 1, 12)
     g.part_set_bootable(device, 1, 1)
-    g.part_add(device, "primary", 32800, 2359295)
+    g.part_add(device, "primary", 144585, 3743144)
  
     # get the list of partitions - we expect two
     partitions = g.list_partitions ()
