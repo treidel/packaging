@@ -554,6 +554,7 @@
     <dir gid="0" mode="0755" name="etc/X11/xkb" timestamp="1341296492" uid="0" />
     <file gid="0" mode="0644" name="etc/adduser.conf" timestamp="1360794446" uid="0" />
     <file gid="0" mode="0644" name="etc/adjtime" timestamp="1360794555" uid="0" />
+    <file gid="0" mode="0644" name="etc/alsa.ctl" timestamp="1334274296" uid="0" />
     <dir gid="0" mode="0755" name="etc/alternatives" timestamp="946685526" uid="0" />
     <file gid="0" mode="0644" name="etc/alternatives/README" timestamp="1334274296" uid="0" />
     <sym gid="0" link="/usr/bin/mawk" mode="0777" name="etc/alternatives/awk" timestamp="1360794388" uid="0" />
