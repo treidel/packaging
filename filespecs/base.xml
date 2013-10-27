@@ -19356,7 +19356,6 @@
     <file gid="0" mode="0644" name="var/log/bootstrap.log" timestamp="1360794461" uid="0" />
     <file gid="43" mode="0660" name="var/log/btmp" timestamp="1360794380" uid="0" />
     <file gid="4" mode="0640" name="var/log/dmesg" timestamp="946685815" uid="0" />
-    <file gid="4" mode="0640" name="var/log/dmesg.0" timestamp="946684816" uid="0" />
     <file gid="0" mode="0644" name="var/log/dpkg.log" timestamp="946685527" uid="0" />
     <file gid="0" mode="0644" name="var/log/faillog" timestamp="946689821" uid="0" />
     <dir gid="0" mode="0755" name="var/log/fsck" timestamp="1360794452" uid="0" />
