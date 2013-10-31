@@ -9,24 +9,28 @@ import xml.etree.ElementTree
 import subprocess
 import glob
 import time
+import ConfigParser
 
 # parse the arguments
 parser = argparse.ArgumentParser(description="build script for leveling-glass images")
 parser.add_argument('--output', required=True)
-parser.add_argument('--staging', required=True)
-parser.add_argument('--filespec', nargs="+", required=True)
+parser.add_argument('--config', required=True)
+parser.add_argument('--staging', nargs="+", required=True)
 args = parser.parse_args()
 
-# expand the list of filespecs if necessary
-if (1 >= len(args.filespec)):
-    filespecs = glob.glob(args.filespec[0])
+# figure out the path(s) to the staging
+if (1 >= len(args.staging)): 
+    stagings = glob.glob(args.staging[0])
 else:
-    filespecs = args.filespec
+    stagings = args.staging
 
-# figure out the path to the staging + boot files
-staging = args.staging
-boot = os.path.abspath(os.path.dirname(sys.argv[0])) + "/boot"
+# parse the config file
+config = ConfigParser.RawConfigParser()
+config.read(args.config)
 
+# extract the config file params
+bootpath = os.path.abspath(os.path.dirname(sys.argv[0])) + "/" + config.get('disk', 'boot_path');
+filespecs = config.get('disk', 'filespecs').split(" ");
 
 # create a temporary tar file
 tmpfileinfo = tempfile.mkstemp(suffix=".tar")
@@ -42,8 +46,9 @@ try:
     # open each filespec
     for filespec in filespecs:
         # open the filespec
-        print >> sys.stderr, "reading filespec " + filespec
-        filespectree = xml.etree.ElementTree.parse(filespec)
+        filespecpath =  os.path.abspath(os.path.dirname(sys.argv[0])) + "/filespecs/" + filespec
+        print >> sys.stderr, "reading filespec " + filespecpath
+        filespectree = xml.etree.ElementTree.parse(filespecpath)
 
         # iterate thru the filespec 
         for element in filespectree.getroot():
@@ -69,18 +74,32 @@ try:
             # do different things depending on the type of entry we found
             if element.tag == "file":
                 tarinfo.type = tarfile.REGTYPE
-                path = staging + "/" + name
-                # open the file for this entry
-                file = open(path, 'r')
-                # populate the size based on the file system contents
-                tarinfo.size = os.path.getsize(path)
-                # add the file to the tar
-                tar.addfile(tarinfo, file)
-                # close the file
-                file.close()
+                # flag if we found the file
+                found = False
+                for staging in stagings:
+                    # create the full file path 
+                    filepath = staging + "/" + name     
+                    try:
+                        # open the file for this entry
+                        file = open(filepath, 'r')
+                        # we found the file
+                        found = True
+                        # populate the size based on the file system contents
+                        tarinfo.size = os.path.getsize(filepath)
+                        # add the file to the tar
+                        tar.addfile(tarinfo, file)
+                        # close the file
+                        file.close()
+                        # bail out of loop
+                        break
+                    except:
+                        # just continue on to try the next staging path
+                        continue
+                # if the file isn't found abort
+                if found == False:
+                    raise BaseException("can not find in staging file=" + name)
             elif element.tag == "dir":
                 tarinfo.type = tarfile.DIRTYPE
-                path = staging + "/" + name
                 tar.addfile(tarinfo)
             elif element.tag == "sym":
                 tarinfo.type = tarfile.SYMTYPE
