@@ -29,8 +29,9 @@ config = ConfigParser.RawConfigParser()
 config.read(args.config)
 
 # extract the config file params
-bootpath = os.path.abspath(os.path.dirname(sys.argv[0])) + "/" + config.get('disk', 'boot_path');
-filespecs = config.get('disk', 'filespecs').split(" ");
+bootpath = os.path.abspath(os.path.dirname(sys.argv[0])) + "/" + config.get('image', 'boot_path');
+filespecs = config.get('image', 'filespecs').split(" ");
+imageconfig = config.get('image', 'disk_config')
 
 # create a temporary tar file
 tmpfileinfo = tempfile.mkstemp(suffix=".tar")
@@ -124,11 +125,8 @@ try:
     # close the temporary tar
     tar.close()
 
-    # figure out the list of boot files 
-    bootfiles = glob.glob(boot + "/*")
-
     # generate the image
-    cmd = ["./mk-disk.py", "--output", args.output, "--tar", tmpfilename, "--boot-files"] + bootfiles
+    cmd = ["./mk-disk.py", "--output", args.output, "--tar", tmpfilename, "--boot-file-path", bootfilepath, '--config', imageconfig] 
     print >> sys.stderr, "executing:", ' '.join(cmd)
     subprocess.call(cmd) 
 
