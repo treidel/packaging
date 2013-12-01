@@ -126,7 +126,7 @@ try:
     tar.close()
 
     # generate the image
-    cmd = ["./mk-disk.py", "--output", args.output, "--tar", tmpfilename, "--boot-file-path", bootfilepath, '--config', imageconfig] 
+    cmd = ["./mk-disk.py", "--output", args.output, "--tar", tmpfilename, "--boot-file-path", bootpath, '--config', imageconfig] 
     print >> sys.stderr, "executing:", ' '.join(cmd)
     subprocess.call(cmd) 
 
