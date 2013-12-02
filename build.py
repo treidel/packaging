@@ -124,11 +124,14 @@ try:
 
     # close the temporary tar
     tar.close()
+    tmpfile.close()
 
     # generate the image
     cmd = ["./mk-disk.py", "--output", args.output, "--tar", tmpfilename, "--boot-file-path", bootpath, '--config', imageconfig] 
     print >> sys.stderr, "executing:", ' '.join(cmd)
-    subprocess.call(cmd) 
+    returncode = subprocess.call(cmd) 
+    if 0 != returncode:
+        raise BaseException("error=" + str(returncode) + " returned from mk-disk.y")
 
 except:
     # close + remove the temporary tar
