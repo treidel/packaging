@@ -1,6 +1,6 @@
 <filespec>
     <file name="var/tmp/disk.img.gz" uid="0" gid="0" mode="644"/>
     <file name="etc/init/copy-disk-image.sh" uid="0" gid="0" mode="755"/>
-    <file name="etc/init/copy-disk-image.conf" uid="0" gid="0" mod="644"/>
+    <file name="etc/init/copy-disk-image.conf" uid="0" gid="0" mode="644"/>
     <sym gid="0" link="/lib/init/upstart-job" mode="0777" name="etc/init.d/copy-disk-image" timestamp="1374280224" uid="0" />
 </filespec>
