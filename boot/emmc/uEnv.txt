@@ -15,7 +15,7 @@ optargs=capemgr.disable_partno=BB-BONELT-HDMI,BB-BONELT-HDMIN
 
 console=ttyO0,115200n8
 
-mmcroot=UUID=7546fc7f-8dc2-4712-a863-bb9d1e5fcf72 ro
+mmcroot=/dev/mmcblk1p2 ro
 mmcrootfstype=ext4 rootwait fixrtc
 
 loadkernel=load mmc ${mmcdev}:${mmcpart} 0x80200000 ${kernel_file}
