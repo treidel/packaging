@@ -3,18 +3,16 @@
 import argparse
 import os
 import tarfile
-import tempfile
 import sys
 import xml.etree.ElementTree
 import subprocess
 import glob
 import time
-import ConfigParser
 
 # parse the arguments
-parser = argparse.ArgumentParser(description="build script for leveling-glass images")
+parser = argparse.ArgumentParser(description="build script to create tar-based OS image")
 parser.add_argument('--output', required=True)
-parser.add_argument('--config', required=True)
+parser.add_argument('--filter-specs', nargs="+", required=True)
 parser.add_argument('--staging', nargs="+", required=True)
 args = parser.parse_args()
 
@@ -24,32 +22,19 @@ if (1 >= len(args.staging)):
 else:
     stagings = args.staging
 
-# parse the config file
-config = ConfigParser.RawConfigParser()
-config.read(args.config)
+# extract the args
+filespecs = args.filter_specs
+output = args.output
 
-# extract the config file params
-bootpath = os.path.abspath(os.path.dirname(sys.argv[0])) + "/" + config.get('image', 'boot_path');
-filespecs = config.get('image', 'filespecs').split(" ");
-imageconfig = config.get('image', 'disk_config')
-
-# create a temporary tar file
-tmpfileinfo = tempfile.mkstemp(suffix=".tar")
-tmpfile = os.fdopen(tmpfileinfo[0], 'wb')
-tmpfilename = tmpfileinfo[1]
-print >> sys.stderr, "created temporary tar " + tmpfilename
-
-# wrap the temp file as a tar
-tar = tarfile.open(fileobj=tmpfile, mode='w')
+# open the tar file 
+tar = tarfile.open(output, mode='w')
 
 # wrap this in an exception handler so that we can remove the tar file in exception cases 
 try:
     # open each filespec
     for filespec in filespecs:
-        # open the filespec
-        filespecpath =  os.path.abspath(os.path.dirname(sys.argv[0])) + "/filespecs/" + filespec
-        print >> sys.stderr, "reading filespec " + filespecpath
-        filespectree = xml.etree.ElementTree.parse(filespecpath)
+        print >> sys.stderr, "reading filespec " + filespec
+        filespectree = xml.etree.ElementTree.parse(filespec)
 
         # iterate thru the filespec 
         for element in filespectree.getroot():
@@ -64,7 +49,7 @@ try:
             else:
                 timestamp = int(element.get("timestamp"))
             # output a log for this element
-            print >> sys.stderr, filespec, "=>", name.encode("utf-8"), "uid=" + str(uid), "gid=" + str(gid), "type=" + str(element.tag), "mode=" + str(oct(mode)), "timestamp=" + str(timestamp)
+            print >> sys.stdout, filespec, "=>", name.encode("utf-8"), "uid=" + str(uid), "gid=" + str(gid), "type=" + str(element.tag), "mode=" + str(oct(mode)), "timestamp=" + str(timestamp)
             # setup the tarinfo object
             tarinfo = tarfile.TarInfo(name)
             tarinfo.uid = uid
@@ -122,26 +107,14 @@ try:
             else:
                 raise BaseException("invalid tag=" + element.tag)
 
-    # close the temporary tar
+    # close the tar
     tar.close()
-    tmpfile.close()
-
-    # generate the image
-    cmd = ["./mk-disk.py", "--output", args.output, "--tar", tmpfilename, "--boot-file-path", bootpath, '--config', imageconfig] 
-    print >> sys.stderr, "executing:", ' '.join(cmd)
-    returncode = subprocess.call(cmd) 
-    if 0 != returncode:
-        raise BaseException("error=" + str(returncode) + " returned from mk-disk.y")
 
 except:
     # close + remove the temporary tar
     tar.close()
-    os.remove(tmpfilename)
+    os.remove(output)
     # re-raise the exception
     raise
 
-# remove the temporary tar
-print >> sys.stderr, "removing temporary tar ", tmpfilename
-os.remove(tmpfilename)
-
-print >> sys.stderr, "finished creating", args.output 
+print >> sys.stderr, "finished creating", output 

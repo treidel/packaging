@@ -1,21 +1,29 @@
+# for now hard code the device + partition to boot from
+mmcdev=1
+mmcpart=2
+
+# setup the filenames of the kernel and its friends
 kernel_file=zImage
 initrd_file=uInitrd
-initrd_high=0xffffffff
-fdt_high=0xffffffff
+devicetree_file=am335x-boneblack.dtb
 
-#Video: Uncomment to override:
-#kms_force_mode=video=HDMI-A-1:1024x768@60
+echo Loading kernel ${kernel_file} from /boot folder on ${mmcdev}:${mmcpart} 
+ext4load mmc ${mmcdev}:${mmcpart} 0x80200000 /boot/${kernel_file}
 
-##BeagleBone Cape Overrides
-##Note: On the BeagleBone Black, there is also an uEnv.txt in the eMMC, so if these changes do not seem to be makeing a difference...
+echo Loading initial RAM disk ${initrd_file} from /boot folder on ${mmcdev}:${mmcpart} 
+ext4load mmc ${mmcdev}:${mmcpart} 0x81000000 /boot/${initrd_file}; setenv initrd_size ${filesize}
 
-##BeagleBone Black:
-##Disable HDMI/eMMC
+echo Loading device tree ${devicetree_file} from /boot/dtbs folder on ${mmcdev}:${mmcpart}
+ext4load mmc ${mmcdev}:${mmcpart} 0x815f0000 /boot/dtbs/${devicetree_file}
+
+# disable HDMI/eMMC so that audio cape will work
 optargs=capemgr.disable_partno=BB-BONELT-HDMI,BB-BONELT-HDMIN
 
+# set console params 
 console=ttyO0,115200n8
 
-mmcroot=/dev/mmcblk1p2 ro
+# set the root partition 
+mmcroot=/dev/mmcblk${mmcdev}p${mmcpart} ro
 mmcrootfstype=ext4 rootwait fixrtc
 
 loadkernel=load mmc ${mmcdev}:${mmcpart} 0x80200000 ${kernel_file}

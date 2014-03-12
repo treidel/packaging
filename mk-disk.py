@@ -6,7 +6,7 @@ import guestfs
 import ConfigParser
  
 # parse the arguments
-parser = argparse.ArgumentParser(description="create a bootable disk image for leveling-glass")
+parser = argparse.ArgumentParser(description="create a bootable disk image for beaglebone black")
 parser.add_argument('--output', required=True)
 parser.add_argument('--config', required=True)
 parser.add_argument('--tar', required=True)
@@ -22,10 +22,12 @@ config.read(args.config)
 
 # extract config params
 sizeinmb = config.getint('disk', 'size_in_mb')
-partition_1_start = config.getint('partition1', 'start')
-partition_1_end = config.getint('partition1', 'end')
-partition_2_start = config.getint('partition2', 'start')
-partition_2_end = config.getint('partition2', 'end')
+partition_1_start = config.getint('boot', 'start')
+partition_1_end = config.getint('boot', 'end')
+partition_2_start = config.getint('bank1', 'start')
+partition_2_end = config.getint('bank1', 'end')
+partition_3_start = config.getint('bank2', 'start')
+partition_3_end = config.getint('bank2', 'end')
 
 # look recursively for all files in the boot file path
 bootpath = os.path.abspath(args.boot_file_path)
@@ -65,37 +67,53 @@ try:
     # Partition the disk as follows
     # partition #1: FAT (type=12)
     # partition #2: LINUX
+    # partition #3: LINUX
     g.part_init(device, "mbr")
     g.part_add(device, "primary", partition_1_start, partition_1_end)
     g.part_set_mbr_id(device, 1, 12)
     g.part_set_bootable(device, 1, 1)
     g.part_add(device, "primary", partition_2_start, partition_2_end)
+    g.part_add(device, "primary", partition_3_start, partition_3_end)
  
-    # get the list of partitions - we expect two
+    # get the list of partitions - we expect three
     partitions = g.list_partitions ()
-    assert (len(partitions) == 2)
+    assert (len(partitions) == 3)
 
     # cache the actual partitions
     bootpartition = partitions[0]
-    rootfspartition = partitions[1]
+    bank1partition = partitions[1]
+    bank2partition = partitions[2]
  
     # create a VAT filesystem on the first partition
     g.mkfs("vfat", bootpartition)
 
-    # create a EXT3 filesystem on the second partition
-    g.mkfs("ext3", rootfspartition)
+    # create a EXT4 filesystem on the second + third partitions
+    g.mkfs("ext4", bank1partition)
+    g.mkfs("ext4", bank2partition)
 
     # set the volume label
-    g.set_e2label(rootfspartition, "rootfs")
+    g.set_e2label(bank1partition, "rootfs")
+    g.set_e2label(bank2partition, "rootfs")
 
-    # mount the linux partition
-    g.mount(rootfspartition, "/")
+    # mount the 1st linux partition
+    g.mount(bank1partition, "/")
 
     # extract the tar
     g.tar_in(args.tar, "/")
 
-    # umount the linux partition and mount the dos partition
+    # umount the 1st linux partition 
     g.umount("/")
+
+    # mount the 2nd linux partition 
+    g.mount(bank2partition, "/")
+
+    # extract the tar
+    g.tar_in(args.tar, "/")
+
+    # umount the 2nd linux partition
+    g.umount("/")
+
+    # now mount the boot partition
     g.mount(bootpartition, "/")
 
     # copy over the boot files
