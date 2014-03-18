@@ -12,7 +12,7 @@ import time
 # parse the arguments
 parser = argparse.ArgumentParser(description="build script to create tar-based OS image")
 parser.add_argument('--output', required=True)
-parser.add_argument('--filter-specs', nargs="+", required=True)
+parser.add_argument('--file-specs', nargs="+", required=True)
 parser.add_argument('--staging', nargs="+", required=True)
 args = parser.parse_args()
 
@@ -23,7 +23,7 @@ else:
     stagings = args.staging
 
 # extract the args
-filespecs = args.filter_specs
+filespecs = args.file_specs
 output = args.output
 
 # open the tar file 

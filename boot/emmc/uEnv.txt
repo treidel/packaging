@@ -1,20 +1,29 @@
+# setup the filenames of the bank control script file
+bankscript_file=bank.txt
+
+# load the bank control script file
+fatload mmc ${mmcdev}:{mmcpart} 0x80000000 ${bankscript_file}; setenv bankscript_size ${filesize}
+
+# run the bank control script
+env import -t 0x80000000 ${bankscript_size}
+
 # for now hard code the device + partition to boot from
-mmcdev=1
-mmcpart=2
+bank_mmcdev=1
+bank_mmcpart=2
 
 # setup the filenames of the kernel and its friends
 kernel_file=zImage
 initrd_file=uInitrd
 devicetree_file=am335x-boneblack.dtb
 
-echo Loading kernel ${kernel_file} from /boot folder on ${mmcdev}:${mmcpart} 
-ext4load mmc ${mmcdev}:${mmcpart} 0x80200000 /boot/${kernel_file}
+echo Loading kernel ${kernel_file} from /boot folder on ${bank_mmcdev}:${bank_mmcpart} 
+ext4load mmc ${bank_mmcdev}:${bank_mmcpart} 0x80200000 /boot/${kernel_file}
 
-echo Loading initial RAM disk ${initrd_file} from /boot folder on ${mmcdev}:${mmcpart} 
-ext4load mmc ${mmcdev}:${mmcpart} 0x81000000 /boot/${initrd_file}; setenv initrd_size ${filesize}
+echo Loading initial RAM disk ${initrd_file} from /boot folder on ${bank_mmcdev}:${bank_mmcpart} 
+ext4load mmc ${bank_mmcdev}:${bank_mmcpart} 0x81000000 /boot/${initrd_file}; setenv initrd_size ${filesize}
 
 echo Loading device tree ${devicetree_file} from /boot/dtbs folder on ${mmcdev}:${mmcpart}
-ext4load mmc ${mmcdev}:${mmcpart} 0x815f0000 /boot/dtbs/${devicetree_file}
+ext4load mmc ${bank_mmcdev}:${bank_mmcpart} 0x815f0000 /boot/dtbs/${devicetree_file}
 
 # disable HDMI/eMMC so that audio cape will work
 optargs=capemgr.disable_partno=BB-BONELT-HDMI,BB-BONELT-HDMIN
@@ -23,22 +32,11 @@ optargs=capemgr.disable_partno=BB-BONELT-HDMI,BB-BONELT-HDMIN
 console=ttyO0,115200n8
 
 # set the root partition 
-mmcroot=/dev/mmcblk${mmcdev}p${mmcpart} ro
+mmcroot=/dev/mmcblk${bank_mmcdev}p${bank_mmcpart} ro
 mmcrootfstype=ext4 rootwait fixrtc
 
-loadkernel=load mmc ${mmcdev}:${mmcpart} 0x80200000 ${kernel_file}
-loadinitrd=load mmc ${mmcdev}:${mmcpart} 0x81000000 ${initrd_file}; setenv initrd_size ${filesize}
-loadfdt=load mmc ${mmcdev}:${mmcpart} 0x815f0000 /dtbs/${fdtfile}
+# setup the kernel boot arguments
+setenv bootargs console=${console} ${optargs} ${kms_force_mode} root=${mmcroot} rootfstype=${mmcrootfstype}
 
-boot_classic=run loadkernel; run loadinitrd
-boot_ftd=run loadkernel; run loadinitrd; run loadfdt
-
-device_args=run expansion_args; run mmcargs
-mmcargs=setenv bootargs console=${console} ${optargs} ${kms_force_mode} root=${mmcroot} rootfstype=${mmcrootfstype} ${expansion}
-
-expansion_args=setenv expansion ip=${ip_method}
-#Classic Board File Boot:
-#uenvcmd=run boot_classic; run device_args; bootz 0x80200000 0x81000000:${initrd_size}
-#New Device Tree Boot:
-uenvcmd=run boot_ftd; run device_args; bootz 0x80200000 0x81000000:${initrd_size} 0x815f0000
-
+# start the kernel
+uenvcmd=bootz 0x80200000 0x81000000:${init_rd_size} 0x815f0000
