@@ -2,7 +2,7 @@
 bankscript_file=bank.txt
 
 # load the bank control script file
-fatload mmc ${mmcdev}:{mmcpart} 0x80000000 ${bankscript_file}; setenv bankscript_size ${filesize}
+fatload mmc ${mmcdev}:1 0x80000000 ${bankscript_file}; setenv bankscript_size ${filesize}
 
 # run the bank control script
 env import -t 0x80000000 ${bankscript_size}
@@ -36,7 +36,7 @@ mmcroot=/dev/mmcblk${bank_mmcdev}p${bank_mmcpart} ro
 mmcrootfstype=ext4 rootwait fixrtc
 
 # setup the kernel boot arguments
-setenv bootargs console=${console} ${optargs} ${kms_force_mode} root=${mmcroot} rootfstype=${mmcrootfstype}
+mmcargs=setenv bootargs console=${console} ${optargs} root=${mmcroot} rootfstype=${mmcrootfstype}
 
 # start the kernel
-uenvcmd=bootz 0x80200000 0x81000000:${init_rd_size} 0x815f0000
+uenvcmd=run mmcargs; bootz 0x80200000 0x81000000:${init_rd_size} 0x815f0000

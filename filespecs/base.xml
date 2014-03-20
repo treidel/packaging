@@ -139,6 +139,7 @@
     <file gid="0" mode="0644" name="boot/dtbs/omap4-var-som.dtb" timestamp="1369825309" uid="0" />
     <file gid="0" mode="0644" name="boot/dtbs/omap5-evm.dtb" timestamp="1369825309" uid="0" />
     <file gid="0" mode="0644" name="boot/initrd.img-3.8.13-bone28" timestamp="946685469" uid="0" />
+    <sym gid="0" link="boot/initrd.img-3.8.13-bone28" mode="0777" name="boot/uInitrd" timestamp="946685590" uid="0" />
     <dir gid="0" mode="0755" name="boot/uboot" timestamp="1370742648" uid="0" />
     <file gid="0" mode="0755" name="boot/vmlinuz-3.8.13-bone28" timestamp="1379054748" uid="0" />
     <sym gid="0" link="vmlinuz-3.8.13-bone28" mode="0777" name="boot/zImage" timestamp="946685590" uid="0" />
