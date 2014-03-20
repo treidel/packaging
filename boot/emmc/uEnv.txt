@@ -2,28 +2,17 @@
 bankscript_file=bank.txt
 
 # load the bank control script file
-fatload mmc ${mmcdev}:1 0x80000000 ${bankscript_file}; setenv bankscript_size ${filesize}
-
-# run the bank control script
-env import -t 0x80000000 ${bankscript_size}
-
-# for now hard code the device + partition to boot from
-bank_mmcdev=1
-bank_mmcpart=2
+loadbank=fatload mmc ${mmcdev}:1 0x80000000 ${bankscript_file}; setenv bankscript_size ${filesize}; env import -t 0x80000000 ${bankscript_size}
 
 # setup the filenames of the kernel and its friends
 kernel_file=zImage
 initrd_file=uInitrd
 devicetree_file=am335x-boneblack.dtb
 
-echo Loading kernel ${kernel_file} from /boot folder on ${bank_mmcdev}:${bank_mmcpart} 
-ext4load mmc ${bank_mmcdev}:${bank_mmcpart} 0x80200000 /boot/${kernel_file}
-
-echo Loading initial RAM disk ${initrd_file} from /boot folder on ${bank_mmcdev}:${bank_mmcpart} 
-ext4load mmc ${bank_mmcdev}:${bank_mmcpart} 0x81000000 /boot/${initrd_file}; setenv initrd_size ${filesize}
-
-echo Loading device tree ${devicetree_file} from /boot/dtbs folder on ${mmcdev}:${mmcpart}
-ext4load mmc ${bank_mmcdev}:${bank_mmcpart} 0x815f0000 /boot/dtbs/${devicetree_file}
+# setup the kernel loading scripts
+loadkernel=echo Loading kernel ${kernel_file} from /boot folder on ${bank_mmcdev}:${bank_mmcpart}; ext4load mmc ${bank_mmcdev}:${bank_mmcpart} 0x80200000 /boot/${kernel_file}
+loadinitrd=echo Loading initial RAM disk ${initrd_file} from /boot folder on ${bank_mmcdev}:${bank_mmcpart}; ext4load mmc ${bank_mmcdev}:${bank_mmcpart} 0x81000000 /boot/${initrd_file}; setenv initrd_size ${filesize}
+loadfdt=echo Loading device tree ${devicetree_file} from /boot/dtbs folder on ${mmcdev}:${mmcpart}; ext4load mmc ${bank_mmcdev}:${bank_mmcpart} 0x815f0000 /boot/dtbs/${devicetree_file}
 
 # disable HDMI/eMMC so that audio cape will work
 optargs=capemgr.disable_partno=BB-BONELT-HDMI,BB-BONELT-HDMIN
@@ -32,11 +21,11 @@ optargs=capemgr.disable_partno=BB-BONELT-HDMI,BB-BONELT-HDMIN
 console=ttyO0,115200n8
 
 # set the root partition 
-mmcroot=/dev/mmcblk${bank_mmcdev}p${bank_mmcpart} ro
-mmcrootfstype=ext4 rootwait fixrtc
+configuremmcroot=setenv mmcroot /dev/mmcblk${bank_mmcdev}p${bank_mmcpart} ro
+configuremmcrootfstype=setenv mmcrootfstype ext4 rootwait fixrtc
 
 # setup the kernel boot arguments
-mmcargs=setenv bootargs console=${console} ${optargs} root=${mmcroot} rootfstype=${mmcrootfstype}
+configurebootargs=run configuremmcroot; run configureemmcrootfstype; setenv bootargs console=${console} ${optargs} root=${mmcroot} rootfstype=${mmcrootfstype}
 
 # start the kernel
-uenvcmd=run mmcargs; bootz 0x80200000 0x81000000:${init_rd_size} 0x815f0000
+uenvcmd=run loadbank; run loadkernel; run loadinitrd; run loadfdt; run configurebootargs; bootz 0x80200000 0x81000000:${init_rd_size} 0x815f0000
