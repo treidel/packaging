@@ -25,7 +25,7 @@ configuremmcroot=setenv mmcroot /dev/mmcblk${bank_mmcdev}p${bank_mmcpart} ro
 configuremmcrootfstype=setenv mmcrootfstype ext4 rootwait fixrtc
 
 # setup the kernel boot arguments
-configurebootargs=run configuremmcroot; run configureemmcrootfstype; setenv bootargs console=${console} ${optargs} root=${mmcroot} rootfstype=${mmcrootfstype}
+configurebootargs=run configuremmcroot; run configuremmcrootfstype; setenv bootargs console=${console} ${optargs} root=${mmcroot} rootfstype=${mmcrootfstype}
 
 # start the kernel
 uenvcmd=run loadbank; run loadkernel; run loadinitrd; run loadfdt; run configurebootargs; bootz 0x80200000 0x81000000:${init_rd_size} 0x815f0000
