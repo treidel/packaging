@@ -95,12 +95,23 @@ try:
     g.set_e2label(bank1partition, "rootfs")
     g.set_e2label(bank2partition, "rootfs")
 
+    # query the UUIDs for the ext4 partitions
+    bank1uuid = g.vfs_uuid(bank1partition)
+    bank2uuid = g.vfs_uuid(bank2partition)
+
     # mount the 1st linux partition
     g.mount(bank1partition, "/")
 
     # extract the tar
     g.tar_in(args.tar, "/")
 
+    # open the fstab file and write in the uuid
+    g.aug_init("/", 0)
+    g.aug_load()
+    g.aug_set("/files/etc/fstab/1/spec", "UUID=" + bank1uuid)
+    g.aug_save()
+    g.aug_close()
+    
     # umount the 1st linux partition 
     g.umount("/")
 
@@ -109,6 +120,13 @@ try:
 
     # extract the tar
     g.tar_in(args.tar, "/")
+
+    # open the fstab file and write in the uuid
+    g.aug_init("/", 0)
+    g.aug_load()
+    g.aug_set("/files/etc/fstab/1/spec", "UUID=" + bank2uuid)
+    g.aug_save()
+    g.aug_close()
 
     # umount the 2nd linux partition
     g.umount("/")
