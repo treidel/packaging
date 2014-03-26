@@ -24,10 +24,12 @@ config.read(args.config)
 sizeinmb = config.getint('disk', 'size_in_mb')
 partition_1_start = config.getint('boot', 'start')
 partition_1_end = config.getint('boot', 'end')
-partition_2_start = config.getint('bank1', 'start')
-partition_2_end = config.getint('bank1', 'end')
-partition_3_start = config.getint('bank2', 'start')
-partition_3_end = config.getint('bank2', 'end')
+partition_2_start = config.getint('update', 'start')
+partition_2_end = config.getint('update', 'end')
+partition_3_start = config.getint('bank1', 'start')
+partition_3_end = config.getint('bank1', 'end')
+partition_4_start = config.getint('bank2', 'start')
+partition_4_end = config.getint('bank2', 'end')
 
 # look recursively for all files in the boot file path
 bootpath = os.path.abspath(args.boot_file_path)
@@ -74,28 +76,32 @@ try:
     g.part_set_bootable(device, 1, 1)
     g.part_add(device, "primary", partition_2_start, partition_2_end)
     g.part_add(device, "primary", partition_3_start, partition_3_end)
+    g.part_add(device, "primary", partition_4_start, partition_4_end)
  
-    # get the list of partitions - we expect three
+    # get the list of partitions - we expect four
     partitions = g.list_partitions ()
-    assert (len(partitions) == 3)
+    assert (len(partitions) == 4)
 
     # cache the actual partitions
     bootpartition = partitions[0]
-    bank1partition = partitions[1]
-    bank2partition = partitions[2]
+    updatepartition = partitions[1]
+    bank1partition = partitions[2]
+    bank2partition = partitions[3]
  
     # create a VAT filesystem on the first partition
     g.mkfs("vfat", bootpartition)
 
-    # create a EXT4 filesystem on the second + third partitions
+    # create EXT4 filesystems on the rest 
+    g.mkfs("ext4", updatepartition)
     g.mkfs("ext4", bank1partition)
     g.mkfs("ext4", bank2partition)
 
-    # set the volume label
-    g.set_e2label(bank1partition, "rootfs")
-    g.set_e2label(bank2partition, "rootfs")
+    # set the volume labels
+    g.set_e2label(updatepartition, "update")
+    g.set_e2label(bank1partition, "bank1")
+    g.set_e2label(bank2partition, "bank2")
 
-    # query the UUIDs for the ext4 partitions
+    # query the UUIDs for the bank partitions
     bank1uuid = g.vfs_uuid(bank1partition)
     bank2uuid = g.vfs_uuid(bank2partition)
 
