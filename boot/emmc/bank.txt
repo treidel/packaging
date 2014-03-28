@@ -1,2 +1,2 @@
 bank_mmcdev=1
-bank_mmcpart=2
+bank_mmcpart=3
