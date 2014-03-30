@@ -1,0 +1,9 @@
+<filespec>
+  <file name="usr/bin/swupdate" uid="0" gid="0" mode="755" timestamp="1396144222"/>
+  <file name="var/www/head_bg.gif" uid="0" gid="0" mode="644" timestamp="1396144281"/>
+  <file name="var/www/index.html" uid="0" gid="0" mode="644" timestamp="1396144281"/>
+  <file name="var/www/jquery.js" uid="0" gid="0" mode="644" timestamp="1396144281"/>
+  <file name="var/www/progress.png" uid="0" gid="0" mode="644" timestamp="1396144281"/>
+  <file name="var/www/recovery.js" uid="0" gid="0" mode="644" timestamp="1396144281"/>
+  <file name="var/www/styles.css" uid="0" gid="0" mode="644" timestamp="1396144281"/>
+</filespec>
